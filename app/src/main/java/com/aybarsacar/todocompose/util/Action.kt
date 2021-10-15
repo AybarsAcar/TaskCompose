@@ -6,5 +6,10 @@ package com.aybarsacar.todocompose.util
  * we will use this action to pass from task to list composable screens
  */
 enum class Action {
-  ADD, UPDATE, DELETE, DELETE_ALL, UNDO, NO_ACTION
+  ADD,
+  UPDATE,
+  DELETE,
+  DELETE_ALL,
+  UNDO,
+  NO_ACTION
 }
