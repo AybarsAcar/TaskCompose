@@ -1,33 +1,71 @@
 package com.aybarsacar.todocompose.ui.screens.list
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.aybarsacar.todocompose.R
 import com.aybarsacar.todocompose.components.PriorityItem
 import com.aybarsacar.todocompose.data.models.Priority
-import com.aybarsacar.todocompose.ui.theme.LARGE_PADDING
-import com.aybarsacar.todocompose.ui.theme.Typography
-import com.aybarsacar.todocompose.ui.theme.topAppBarBackGroundColor
-import com.aybarsacar.todocompose.ui.theme.topAppBarContentColor
+import com.aybarsacar.todocompose.ui.theme.*
+import com.aybarsacar.todocompose.util.SearchAppBarState
+import com.aybarsacar.todocompose.util.TrailingIconState
+import com.aybarsacar.todocompose.viewmodels.SharedViewModel
 
 
 /**
  * toolbar (top bar) of the List screen
  */
 @Composable
-fun ListAppBar() {
-  DefaultListAppBar(
-    onSearchClicked = {},
-    onSortClicked = {},
-    onDeleteClicked = {}
-  )
+fun ListAppBar(
+  sharedViewModel: SharedViewModel,
+  searchAppBarState: SearchAppBarState,
+  searchTextState: String
+) {
+
+  when (searchAppBarState) {
+
+    SearchAppBarState.CLOSED -> {
+      DefaultListAppBar(
+        onSearchClicked = {
+          sharedViewModel.searchAppBarState.value = SearchAppBarState.OPENED
+        },
+        onSortClicked = {},
+        onDeleteClicked = {}
+      )
+    }
+
+    else -> {
+      SearchAppBar(
+        text = searchTextState,
+        onTextChange = {
+          sharedViewModel.searchTextState.value = it
+        },
+        onCloseClicked = {
+          sharedViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
+          sharedViewModel.searchTextState.value = ""
+        },
+        onSearchClicked = {}
+      )
+    }
+
+  }
+
+
 }
 
 
@@ -40,7 +78,7 @@ fun DefaultListAppBar(
   TopAppBar(
     title = {
       Text(
-        text = "Tasks",
+        text = stringResource(id = R.string.tasks),
         color = MaterialTheme.colors.topAppBarContentColor
       )
     },
@@ -178,6 +216,128 @@ fun DeleteAllAction(
 }
 
 
+/**
+ * application bar at the search state
+ */
+@Composable
+fun SearchAppBar(
+  text: String,
+  onTextChange: (String) -> Unit,
+  onCloseClicked: () -> Unit,
+  onSearchClicked: (String) -> Unit
+) {
+
+  var trailingIconState by remember { mutableStateOf(TrailingIconState.READY_TO_DELETE) }
+
+  Surface(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(TOP_APP_BAR_HEIGHT),
+
+    elevation = AppBarDefaults.TopAppBarElevation,
+
+    color = MaterialTheme.colors.topAppBarBackGroundColor
+  ) {
+
+    // to represent hte search widget
+    TextField(
+      modifier = Modifier.fillMaxWidth(),
+      value = text,
+      onValueChange = {
+        onTextChange(it)
+      },
+
+      placeholder = {
+        Text(
+          modifier = Modifier.alpha(ContentAlpha.medium),
+          text = stringResource(id = R.string.search),
+          color = Color.White
+        )
+      },
+
+      textStyle = TextStyle(
+        color = MaterialTheme.colors.topAppBarContentColor,
+        fontSize = MaterialTheme.typography.subtitle1.fontSize
+      ),
+
+      singleLine = true,
+
+      leadingIcon = {
+        IconButton(
+          modifier = Modifier
+            .alpha(ContentAlpha.disabled),
+          onClick = { }
+        ) {
+
+          Icon(
+            imageVector = Icons.Filled.Search,
+            contentDescription = stringResource(id = R.string.search_icon),
+            tint = MaterialTheme.colors.topAppBarContentColor
+          )
+
+        }
+      },
+
+      trailingIcon = {
+        IconButton(
+          onClick = {
+            when (trailingIconState) {
+              TrailingIconState.READY_TO_DELETE -> {
+                // remove the text when there is text inside
+                onTextChange("")
+                trailingIconState = TrailingIconState.READY_TO_CLOSE
+              }
+
+              TrailingIconState.READY_TO_CLOSE -> {
+                if (text.isNotEmpty()) {
+                  onTextChange("")
+                } else {
+                  onCloseClicked()
+
+                  // set back to the default state
+                  trailingIconState = TrailingIconState.READY_TO_DELETE
+                }
+              }
+            }
+          }
+        ) {
+
+          Icon(
+            imageVector = Icons.Filled.Close,
+            contentDescription = stringResource(id = R.string.close_icon),
+            tint = MaterialTheme.colors.topAppBarContentColor
+          )
+
+        }
+      },
+
+      // show the search button on the keyboard
+      keyboardOptions = KeyboardOptions(
+        imeAction = ImeAction.Search
+      ),
+
+      // search action will be triggered when clicked
+      keyboardActions = KeyboardActions(
+        onSearch = {
+          onSearchClicked(text)
+        }
+      ),
+
+      // override default colours
+      colors = TextFieldDefaults.textFieldColors(
+        cursorColor = MaterialTheme.colors.topAppBarContentColor,
+        focusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        backgroundColor = Color.Transparent
+      )
+    )
+
+  }
+
+}
+
+
 @Composable
 @Preview
 private fun DefaultListAppBarPreview() {
@@ -185,5 +345,17 @@ private fun DefaultListAppBarPreview() {
     onSearchClicked = {},
     onSortClicked = {},
     onDeleteClicked = {}
+  )
+}
+
+
+@Composable
+@Preview
+private fun SearchAppBarPreview() {
+  SearchAppBar(
+    text = "",
+    onTextChange = {},
+    onCloseClicked = {},
+    onSearchClicked = {}
   )
 }
