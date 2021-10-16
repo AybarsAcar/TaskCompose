@@ -6,11 +6,12 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.aybarsacar.todocompose.R
+import com.aybarsacar.todocompose.components.DisplayAlertDialog
 import com.aybarsacar.todocompose.data.models.Priority
 import com.aybarsacar.todocompose.data.models.TodoTask
 import com.aybarsacar.todocompose.ui.theme.topAppBarBackGroundColor
@@ -113,10 +114,36 @@ fun EditTaskAppBar(
     backgroundColor = MaterialTheme.colors.topAppBarBackGroundColor,
 
     actions = {
-      DeleteAction(onDeleteClicked = navigateToListScreen)
-      UpdateAction(onUpdateClicked = navigateToListScreen)
+      EditTaskAppBarActions(selectedTask = selectedTask, navigateToListScreen = navigateToListScreen)
     }
   )
+}
+
+
+@Composable
+fun EditTaskAppBarActions(
+  selectedTask: TodoTask,
+  navigateToListScreen: (Action) -> Unit
+) {
+
+  var isDialogOpen by remember { mutableStateOf(false) }
+
+  DisplayAlertDialog(
+    title = "Delete ${selectedTask.title}",
+    message = "Are you sure you want to delete ${selectedTask.title}",
+    isOpen = isDialogOpen,
+    closeDialog = {
+      isDialogOpen = false
+    },
+    onYesClicked = {
+      navigateToListScreen(Action.DELETE)
+    })
+
+  DeleteAction(onDeleteClicked = {
+    isDialogOpen = true
+  })
+
+  UpdateAction(onUpdateClicked = navigateToListScreen)
 }
 
 
@@ -140,10 +167,10 @@ fun CloseAction(
 
 @Composable
 fun DeleteAction(
-  onDeleteClicked: (Action) -> Unit
+  onDeleteClicked: () -> Unit
 ) {
   IconButton(onClick = {
-    onDeleteClicked(Action.DELETE)
+    onDeleteClicked()
   }) {
 
     Icon(

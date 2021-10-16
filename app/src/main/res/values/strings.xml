@@ -17,4 +17,6 @@
     <string name="dropdown_arrow_icon">Drowdown Arrow Icon</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="confirm">Confirm</string>
+    <string name="no">No</string>
 </resources>
