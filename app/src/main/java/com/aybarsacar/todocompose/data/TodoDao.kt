@@ -35,7 +35,7 @@ interface TodoDao {
   /**
    * searches by the title or description
    */
-  @Query("select * from todo_table where title like :searchQuery or description like :searchQuery")
+  @Query("select * from todo_table where upper(title) like upper(:searchQuery) or upper(description) like upper(:searchQuery)")
   fun searchDatabase(searchQuery: String): Flow<List<TodoTask>>
 
 
