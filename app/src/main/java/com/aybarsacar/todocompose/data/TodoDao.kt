@@ -39,10 +39,10 @@ interface TodoDao {
   fun searchDatabase(searchQuery: String): Flow<List<TodoTask>>
 
 
-  @Query("select * from todo_table order by case when priority like 'L%' then 1 when priority like '%M' then 2 when priority like '%H' then 3 end")
+  @Query("select * from todo_table order by case when priority like 'L%' then 1 when priority like 'M%' then 2 when priority like 'H%' then 3 end")
   fun sortByLowPriority(): Flow<List<TodoTask>>
 
 
-  @Query("select * from todo_table order by case when priority like 'H%' then 1 when priority like '%M' then 2 when priority like '%L' then 3 end")
+  @Query("select * from todo_table order by case when priority like 'H%' then 1 when priority like 'M%' then 2 when priority like 'L%' then 3 end")
   fun sortByHighPriority(): Flow<List<TodoTask>>
 }

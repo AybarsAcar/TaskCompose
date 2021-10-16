@@ -32,7 +32,9 @@ fun NavGraphBuilder.taskComposable(
 
     val taskId = it.arguments!!.getInt(Constants.TASK_ARGUMENT_KEY)
 
-    sharedViewModel.getSelectedTask(taskId)
+    LaunchedEffect(key1 = taskId) {
+      sharedViewModel.getSelectedTask(taskId)
+    }
 
     // selectedTask will be null when taskId == -1
     val selectedTask by sharedViewModel.selectedTask.collectAsState()

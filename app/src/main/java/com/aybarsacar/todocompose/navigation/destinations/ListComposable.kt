@@ -1,5 +1,6 @@
 package com.aybarsacar.todocompose.navigation.destinations
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavGraphBuilder
@@ -15,6 +16,7 @@ import com.aybarsacar.todocompose.viewmodels.SharedViewModel
 /**
  * Extension function on the NavGraphBuilder
  */
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 fun NavGraphBuilder.listComposable(
   navigateToTaskScreen: (taskId: Int) -> Unit,

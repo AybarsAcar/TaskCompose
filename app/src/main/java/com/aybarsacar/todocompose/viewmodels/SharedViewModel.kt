@@ -14,9 +14,7 @@ import com.aybarsacar.todocompose.util.RequestState
 import com.aybarsacar.todocompose.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,6 +42,15 @@ class SharedViewModel @Inject constructor(
   private val _selectedTask: MutableStateFlow<TodoTask?> = MutableStateFlow(null)
   val selectedTask: StateFlow<TodoTask?> = _selectedTask
 
+  private val _sortState = MutableStateFlow<RequestState<Priority>>(RequestState.Idle)
+  val sortState: StateFlow<RequestState<Priority>> = _sortState
+
+  val lowPriorityTasks: StateFlow<List<TodoTask>> =
+    _repository.sortByLowPriority.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+  val highPriorityTasks: StateFlow<List<TodoTask>> =
+    _repository.sortByHighPriority.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
   // observe the state of the search app bar
   // default state is closed
   val searchAppBarState: MutableState<SearchAppBarState> = mutableStateOf(SearchAppBarState.CLOSED)
@@ -67,6 +74,38 @@ class SharedViewModel @Inject constructor(
     } catch (e: Exception) {
       _allTasks.value = RequestState.Error(e)
     }
+  }
+
+
+  fun readSortState() {
+
+    _sortState.value = RequestState.Loading
+
+    try {
+      viewModelScope.launch {
+        _dataStoreRepository.readSortState
+          .map {
+            Priority.valueOf(it)
+          }
+          .collect {
+
+            _sortState.value = RequestState.Success(it)
+
+          }
+      }
+    } catch (e: Exception) {
+      _sortState.value = RequestState.Error(e)
+    }
+
+  }
+
+
+  fun persistSortingState(priority: Priority) {
+
+    viewModelScope.launch(Dispatchers.IO) {
+      _dataStoreRepository.persistSortState(priority)
+    }
+
   }
 
 

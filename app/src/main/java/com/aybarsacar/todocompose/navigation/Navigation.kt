@@ -1,5 +1,6 @@
 package com.aybarsacar.todocompose.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -10,6 +11,7 @@ import com.aybarsacar.todocompose.navigation.destinations.taskComposable
 import com.aybarsacar.todocompose.util.Constants
 import com.aybarsacar.todocompose.viewmodels.SharedViewModel
 
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun SetupNavigation(

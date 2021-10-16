@@ -14,11 +14,15 @@ val Teal200 = Color(0xFF03DAC5)
 val LowPriorityColor = Color(0xFF00C980)
 val MediumPriorityColor = Color(0xFFFFC114)
 val HighPriorityColor = Color(0xFFFF4646)
-val NonePriorityColor = Color(0xFFFFFFFF)
+val NonePriorityColor = Color(0xFF9C9C9C)
 
 val LightGray = Color(0xFFFCFCFC)
 val MediumGray = Color(0xFF9C9C9C)
 val DarkGray = Color(0xFF141414)
+
+// Error colors
+val ErrorLight = Color(0xFFB00020)
+val ErrorDark = Color(0xFFCF6679)
 
 
 // Extension properties
@@ -43,3 +47,7 @@ val Colors.taskItemBackgroundColor: Color
 val Colors.taskItemTextColor: Color
   @Composable
   get() = if (isLight) DarkGray else LightGray
+
+val Colors.errorAndDeleteBackgroundColor: Color
+  @Composable
+  get() = if (isLight) ErrorLight else ErrorDark

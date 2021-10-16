@@ -1,5 +1,6 @@
 package com.aybarsacar.todocompose.ui.screens.list
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,6 +15,7 @@ import com.aybarsacar.todocompose.viewmodels.SharedViewModel
 import kotlinx.coroutines.launch
 
 
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun ListScreen(
@@ -25,6 +27,7 @@ fun ListScreen(
   // this will run each time allTasks change because we observe it
   LaunchedEffect(key1 = true) {
     sharedViewModel.getAllTodoTasks()
+    sharedViewModel.readSortState()
   }
 
   val action by sharedViewModel.action
@@ -33,6 +36,12 @@ fun ListScreen(
   val allTasks by sharedViewModel.allTasks.collectAsState()
   val searchedTasks by sharedViewModel.searchedTasks.collectAsState()
 
+  // observe sort state and sorted lists
+  val sortState by sharedViewModel.sortState.collectAsState()
+  val lowPriorityTasks by sharedViewModel.lowPriorityTasks.collectAsState()
+  val highPriorityTasks by sharedViewModel.highPriorityTasks.collectAsState()
+
+  // observe the search app bar state and its text
   val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
   val searchTextState: String by sharedViewModel.searchTextState
 
@@ -65,8 +74,15 @@ fun ListScreen(
       ListContent(
         allTasks = allTasks,
         searchedTasks = searchedTasks,
+        lowPriorityTasks = lowPriorityTasks,
+        highPriorityTasks = highPriorityTasks,
+        sortState = sortState,
         searchAppBarState = searchAppBarState,
-        navigateToTaskScreen = navigateToTaskScreen
+        navigateToTaskScreen = navigateToTaskScreen,
+        onSwipeToDelete = { action, task ->
+          sharedViewModel.action.value = action
+          sharedViewModel.updateTaskFields(selectedTask = task)
+        }
       )
     },
     floatingActionButton = {
