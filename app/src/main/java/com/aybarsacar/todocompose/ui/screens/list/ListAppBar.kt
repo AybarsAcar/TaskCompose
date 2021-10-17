@@ -25,7 +25,6 @@ import com.aybarsacar.todocompose.data.models.Priority
 import com.aybarsacar.todocompose.ui.theme.*
 import com.aybarsacar.todocompose.util.Action
 import com.aybarsacar.todocompose.util.SearchAppBarState
-import com.aybarsacar.todocompose.util.TrailingIconState
 import com.aybarsacar.todocompose.viewmodels.SharedViewModel
 
 
@@ -251,8 +250,6 @@ fun SearchAppBar(
   onSearchClicked: (String) -> Unit
 ) {
 
-  var trailingIconState by remember { mutableStateOf(TrailingIconState.READY_TO_DELETE) }
-
   Surface(
     modifier = Modifier
       .fillMaxWidth()
@@ -305,23 +302,10 @@ fun SearchAppBar(
       trailingIcon = {
         IconButton(
           onClick = {
-            when (trailingIconState) {
-              TrailingIconState.READY_TO_DELETE -> {
-                // remove the text when there is text inside
-                onTextChange("")
-                trailingIconState = TrailingIconState.READY_TO_CLOSE
-              }
-
-              TrailingIconState.READY_TO_CLOSE -> {
-                if (text.isNotEmpty()) {
-                  onTextChange("")
-                } else {
-                  onCloseClicked()
-
-                  // set back to the default state
-                  trailingIconState = TrailingIconState.READY_TO_DELETE
-                }
-              }
+            if (text.isNotEmpty()) {
+              onTextChange("")
+            } else {
+              onCloseClicked()
             }
           }
         ) {

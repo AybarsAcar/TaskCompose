@@ -19,18 +19,14 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @Composable
 fun ListScreen(
+  action: Action,
   navigateToTaskScreen: (taskId: Int) -> Unit,
   sharedViewModel: SharedViewModel
 ) {
 
-  // retrieve all the tasks from our database
-  // this will run each time allTasks change because we observe it
-  LaunchedEffect(key1 = true) {
-    sharedViewModel.getAllTodoTasks()
-    sharedViewModel.readSortState()
+  LaunchedEffect(key1 = action) {
+    sharedViewModel.handleDatabaseActions(action)
   }
-
-  val action by sharedViewModel.action
 
   // observe our tasks
   val allTasks by sharedViewModel.allTasks.collectAsState()
@@ -49,8 +45,8 @@ fun ListScreen(
 
   DisplaySnackBar(
     scaffoldState = scaffoldState,
-    handleDatabaseActions = {
-      sharedViewModel.handleDatabaseActions(action)
+    onComplete = {
+      sharedViewModel.action.value = it
     },
     onUndoClicked = {
       sharedViewModel.action.value = it
@@ -82,6 +78,7 @@ fun ListScreen(
         onSwipeToDelete = { action, task ->
           sharedViewModel.action.value = action
           sharedViewModel.updateTaskFields(selectedTask = task)
+          scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
         }
       )
     },
@@ -121,13 +118,12 @@ fun ListFab(
 @Composable
 fun DisplaySnackBar(
   scaffoldState: ScaffoldState,
-  handleDatabaseActions: () -> Unit,
+  onComplete: (Action) -> Unit,
   onUndoClicked: (Action) -> Unit,
   taskTitle: String,
   action: Action
 ) {
 
-  handleDatabaseActions()
 
   val scope = rememberCoroutineScope()
 
@@ -144,6 +140,8 @@ fun DisplaySnackBar(
           onUndoClicked(it)
         }
       }
+
+      onComplete(Action.NO_ACTION)
 
     }
   }

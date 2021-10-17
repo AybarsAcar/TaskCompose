@@ -58,8 +58,13 @@ class SharedViewModel @Inject constructor(
   // to represent the search text
   val searchTextState: MutableState<String> = mutableStateOf("")
 
+  init {
+    getAllTodoTasks()
+    readSortState()
+  }
 
-  fun getAllTodoTasks() {
+
+  private fun getAllTodoTasks() {
 
     _allTasks.value = RequestState.Loading
 
@@ -77,7 +82,7 @@ class SharedViewModel @Inject constructor(
   }
 
 
-  fun readSortState() {
+  private fun readSortState() {
 
     _sortState.value = RequestState.Loading
 
@@ -216,9 +221,6 @@ class SharedViewModel @Inject constructor(
       else -> {
       }
     }
-
-    // change the local action back to NO_ACTION after executing
-    this.action.value = Action.NO_ACTION
   }
 
 

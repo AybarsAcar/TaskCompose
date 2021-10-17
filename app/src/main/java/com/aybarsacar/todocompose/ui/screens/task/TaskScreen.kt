@@ -2,6 +2,7 @@ package com.aybarsacar.todocompose.ui.screens.task
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,13 @@ fun TaskScreen(
   val priority: Priority by sharedViewModel.priority
 
   val context = LocalContext.current
+
+
+  // intercept the back button and set the action to no action
+  BackHandler {
+    navigateToListScreen(Action.NO_ACTION)
+  }
+
 
   Scaffold(
     topBar = {
