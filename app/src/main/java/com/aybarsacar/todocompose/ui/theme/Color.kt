@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 val Purple200 = Color(0xFFBB86FC)
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Teal200 = Color(0xFF03DAC6)
 
 // priority colours
 val LowPriorityColor = Color(0xFF00C980)
@@ -38,7 +38,11 @@ val Colors.topAppBarBackGroundColor: Color
 
 val Colors.fabBackgroundColor: Color
   @Composable
-  get() = if (isLight) Teal200 else Purple700
+  get() = if (isLight) Purple700 else Teal200
+
+val Colors.fabIconColor: Color
+  @Composable
+  get() = if (isLight) Color.White else Color.Black
 
 val Colors.taskItemBackgroundColor: Color
   @Composable
@@ -51,3 +55,7 @@ val Colors.taskItemTextColor: Color
 val Colors.errorAndDeleteBackgroundColor: Color
   @Composable
   get() = if (isLight) ErrorLight else ErrorDark
+
+val Colors.splashScreenBackground: Color
+  @Composable
+  get() = if (isLight) Purple700 else Color.Black

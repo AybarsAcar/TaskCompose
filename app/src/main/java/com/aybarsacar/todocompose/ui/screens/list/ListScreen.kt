@@ -5,10 +5,10 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.aybarsacar.todocompose.R
 import com.aybarsacar.todocompose.ui.theme.fabBackgroundColor
+import com.aybarsacar.todocompose.ui.theme.fabIconColor
 import com.aybarsacar.todocompose.util.Action
 import com.aybarsacar.todocompose.util.SearchAppBarState
 import com.aybarsacar.todocompose.viewmodels.SharedViewModel
@@ -112,7 +112,7 @@ fun ListFab(
     Icon(
       imageVector = Icons.Filled.Add,
       contentDescription = stringResource(id = R.string.add_button),
-      tint = Color.White
+      tint = MaterialTheme.colors.fabIconColor
     )
   }
 }
